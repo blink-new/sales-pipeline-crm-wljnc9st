@@ -40,7 +40,7 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
           {deals.map((deal) => (
             <SortableDealCard key={deal.id} deal={deal} />
           ))}
-        </SortableContext}
+        </SortableContext>
       </div>
     </div>
   )
