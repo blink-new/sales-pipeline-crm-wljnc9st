@@ -1,5 +1,5 @@
 
-import { Check, HelpCircle, Zap, Star } from "lucide-react"
+import { Check, HelpCircle, Zap, Star, X } from "lucide-react"
 import { Button } from "../components/ui/button"
 import {
   Tooltip,
@@ -14,6 +14,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../components/ui/accordion"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog"
+import { useState } from "react"
 import { cn } from "../lib/utils"
 
 const features = {
@@ -74,6 +82,12 @@ const testimonials = [
 ]
 
 export function PricingPage() {
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+
+  const handleUpgradeClick = () => {
+    setShowUpgradeModal(true)
+  }
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-16">
       {/* Header with gradient background */}
@@ -134,7 +148,10 @@ export function PricingPage() {
             <span className="text-4xl font-bold">$29</span>
             <span className="text-muted-foreground">/month</span>
           </div>
-          <Button className="mb-8 w-full bg-violet-600 hover:bg-violet-700">
+          <Button 
+            className="mb-8 w-full bg-violet-600 hover:bg-violet-700"
+            onClick={handleUpgradeClick}
+          >
             <Zap className="mr-2 h-4 w-4" />
             Upgrade Now
           </Button>
@@ -226,10 +243,48 @@ export function PricingPage() {
         <Button
           size="lg"
           className="bg-violet-600 hover:bg-violet-700"
+          onClick={handleUpgradeClick}
         >
           Upgrade to Pro
         </Button>
       </div>
+
+      {/* Upgrade Modal */}
+      <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Upgrade to Pro</DialogTitle>
+            <DialogDescription>
+              You're about to upgrade to Pro plan. Complete your payment to get instant access to all Pro features.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex items-center justify-between border-b pb-4">
+              <div>
+                <h4 className="font-medium">Pro Plan</h4>
+                <p className="text-sm text-muted-foreground">Monthly subscription</p>
+              </div>
+              <div className="text-right">
+                <p className="font-medium">$29.00</p>
+                <p className="text-sm text-muted-foreground">USD/month</p>
+              </div>
+            </div>
+            <Button 
+              className="w-full bg-violet-600 hover:bg-violet-700"
+              onClick={() => {
+                // Here you would typically integrate with your payment processor
+                console.log("Processing payment...")
+              }}
+            >
+              <Zap className="mr-2 h-4 w-4" />
+              Complete Upgrade
+            </Button>
+            <p className="text-center text-sm text-muted-foreground">
+              You can cancel anytime. 30-day money-back guarantee.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
