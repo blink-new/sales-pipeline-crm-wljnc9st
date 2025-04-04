@@ -1,67 +1,50 @@
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
-import { PlusCircle } from "lucide-react"
+import { useState } from "react"
 import useDealStore from "../store/dealStore"
-import { nanoid } from "nanoid"
-import { cn, formatCurrency } from "../lib/utils"
-import { Calendar } from "./ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { Slider } from "./ui/slider"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 
-export function NewDealDialog() {
-  const { addDeal } = useDealStore()
-  const [open, setOpen] = useState(false)
+interface NewDealDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function NewDealDialog({ open, onOpenChange }: NewDealDialogProps) {
+  const { stages, addDeal } = useDealStore()
   const [name, setName] = useState("")
-  const [value, setValue] = useState("10000")
-  const [probability, setProbability] = useState(50)
-  const [date, setDate] = useState<Date>(new Date())
+  const [value, setValue] = useState("")
+  const [stage, setStage] = useState(stages[0]?.id || "")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    const newDeal = {
-      id: nanoid(),
+    if (!name || !stage) return
+
+    addDeal({
+      id: crypto.randomUUID(),
       name,
-      value: parseFloat(value),
-      stage: "lead", // Start in lead stage
-      probability,
-      expectedCloseDate: date,
-      companyId: "1", // Default values for now
-      contactId: "1",
-      description: "",
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-    
-    addDeal(newDeal)
-    setOpen(false)
-    
+      value: parseFloat(value) || 0,
+      stage,
+      createdAt: new Date().toISOString()
+    })
+
     // Reset form
     setName("")
-    setValue("10000")
-    setProbability(50)
-    setDate(new Date())
+    setValue("")
+    setStage(stages[0]?.id || "")
+    onOpenChange(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          New Deal
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Deal</DialogTitle>
+          <DialogTitle>New Deal</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Deal Name</Label>
             <Input
@@ -69,63 +52,39 @@ export function NewDealDialog() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter deal name"
-              required
             />
           </div>
-          
           <div className="space-y-2">
-            <Label htmlFor="value">Deal Value</Label>
-            <div className="flex items-center space-x-4">
-              <Input
-                id="value"
-                type="number"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                required
-              />
-              <div className="text-sm text-muted-foreground w-24">
-                {formatCurrency(parseFloat(value))}
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Probability ({probability}%)</Label>
-            <Slider
-              value={[probability]}
-              onValueChange={(values) => setProbability(values[0])}
-              max={100}
-              step={10}
+            <Label htmlFor="value">Value</Label>
+            <Input
+              id="value"
+              type="number"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Enter deal value"
             />
           </div>
-
           <div className="space-y-2">
-            <Label>Expected Close Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : "Pick a date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(date) => date && setDate(date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <Label htmlFor="stage">Stage</Label>
+            <Select value={stage} onValueChange={setStage}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a stage" />
+              </SelectTrigger>
+              <SelectContent>
+                {stages.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-
-          <Button type="submit" className="w-full">Add Deal</Button>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button type="submit">Create Deal</Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
