@@ -20,16 +20,23 @@ export function PipelineColumn({ stage, deals, isDropping }: PipelineColumnProps
     <div
       ref={setNodeRef}
       className={cn(
-        "w-80 shrink-0 p-2 rounded-lg",
-        isOver && "bg-muted/50",
+        "w-80 shrink-0 bg-card rounded-xl border shadow-sm",
+        isOver && "ring-2 ring-primary/20 bg-muted/50",
         isDropping && "ring-2 ring-primary"
       )}
     >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold">{stage.name}</h3>
-        <span className="text-muted-foreground text-sm">
-          {deals.length} {deals.length === 1 ? 'deal' : 'deals'}
-        </span>
+      <div className="p-3 border-b bg-card">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium">{stage.name}</h3>
+            <div className="flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full bg-muted">
+              {deals.length}
+            </div>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            ${deals.reduce((sum, deal) => sum + (deal.value || 0), 0).toLocaleString()}
+          </div>
+        </div>
       </div>
 
       <SortableContext 
@@ -37,10 +44,15 @@ export function PipelineColumn({ stage, deals, isDropping }: PipelineColumnProps
         items={deals.map(d => d.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="space-y-3">
+        <div className="p-3 space-y-3">
           {deals.map((deal) => (
             <SortableDealCard key={deal.id} deal={deal} />
           ))}
+          {deals.length === 0 && (
+            <div className="flex items-center justify-center h-24 border-2 border-dashed rounded-lg border-muted">
+              <p className="text-sm text-muted-foreground">Drop deals here</p>
+            </div>
+          )}
         </div>
       </SortableContext>
     </div>

@@ -8,10 +8,9 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-  closestCorners,
+  pointerWithin,
   DragOverlay,
   defaultDropAnimationSideEffects,
-  pointerWithin,
 } from '@dnd-kit/core'
 import { 
   arrayMove,
@@ -23,6 +22,8 @@ import useDealStore from '../store/dealStore'
 import { PipelineColumn } from './PipelineColumn'
 import { useState } from 'react'
 import { DealCard } from './DealCard'
+import { Plus } from 'lucide-react'
+import { Button } from './ui/button'
 
 const dropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -69,11 +70,9 @@ export function PipelineBoard() {
     const activeId = active.id as string
     const overId = over.id as string
 
-    // Find the active deal
     const activeDeal = deals.find(deal => deal.id === activeId)
     if (!activeDeal) return
 
-    // Check if we're over a stage
     const overStage = stages.find(stage => stage.id === overId)
     if (overStage && activeDeal.stage !== overId) {
       setCurrentStage(overId)
@@ -92,16 +91,13 @@ export function PipelineBoard() {
     const activeId = active.id as string
     const overId = over.id as string
 
-    // Find the active deal
     const activeDeal = deals.find(deal => deal.id === activeId)
     if (!activeDeal) return
 
-    // Find if we're over a stage
     const overStage = stages.find(stage => stage.id === overId)
     if (overStage) {
       moveDeal(activeId, overId)
     } else {
-      // If we're not over a stage, but we have a currentStage, move to that
       if (currentStage && currentStage !== activeDeal.stage) {
         moveDeal(activeId, currentStage)
       }
@@ -119,32 +115,42 @@ export function PipelineBoard() {
   const activeDeal = activeId ? deals.find(deal => deal.id === activeId) : null
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={pointerWithin}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-    >
-      <div className="flex gap-4 h-[calc(100vh-12rem)] overflow-x-auto p-4">
-        {stages.map((stage: Stage) => (
-          <PipelineColumn
-            key={stage.id}
-            stage={stage}
-            deals={deals.filter((deal) => deal.stage === stage.id)}
-            isDropping={currentStage === stage.id}
-          />
-        ))}
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between px-6 py-4 border-b">
+        <h1 className="text-2xl font-semibold tracking-tight">Pipeline</h1>
+        <Button size="sm">
+          <Plus className="w-4 h-4 mr-2" />
+          New Deal
+        </Button>
       </div>
+      
+      <DndContext
+        sensors={sensors}
+        collisionDetection={pointerWithin}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
+        <div className="flex gap-6 h-[calc(100vh-8rem)] overflow-x-auto p-6 bg-muted/30">
+          {stages.map((stage: Stage) => (
+            <PipelineColumn
+              key={stage.id}
+              stage={stage}
+              deals={deals.filter((deal) => deal.stage === stage.id)}
+              isDropping={currentStage === stage.id}
+            />
+          ))}
+        </div>
 
-      <DragOverlay dropAnimation={dropAnimation}>
-        {activeId && activeDeal ? (
-          <div className="w-80">
-            <DealCard deal={activeDeal} />
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+        <DragOverlay dropAnimation={dropAnimation}>
+          {activeId && activeDeal ? (
+            <div className="w-80">
+              <DealCard deal={activeDeal} />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
   )
 }
