@@ -26,7 +26,7 @@ export function NewDealDialog({ open, onOpenChange }: NewDealDialogProps) {
       company: company.trim(),
       value: parseFloat(value) || 0,
       status: 'active',
-      stage: 'Lead'
+      stage: 'Lead' // This is the correct initial stage from our stages array
     })
 
     setName('')
