@@ -1,10 +1,7 @@
 
-import { useDroppable } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Stage, Deal } from '../types'
+import { Deal, Stage } from '../types'
 import { DealCard } from './DealCard'
-import { cn } from '../lib/utils'
-import { SortableDealCard } from './SortableDealCard'
+import { useDroppable } from '@dnd-kit/core'
 
 interface PipelineColumnProps {
   stage: Stage
@@ -12,35 +9,27 @@ interface PipelineColumnProps {
 }
 
 export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
-  const { setNodeRef, isOver } = useDroppable({
+  const { setNodeRef } = useDroppable({
     id: stage.id,
   })
 
   return (
-    <div
-      className={cn(
-        'flex-shrink-0 w-80 bg-muted/30 rounded-lg p-4',
-        isOver && 'ring-2 ring-primary/20'
-      )}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className={cn('w-3 h-3 rounded-full', stage.color)} />
-          <h3 className="font-semibold">{stage.name}</h3>
-        </div>
-        <span className="text-sm text-muted-foreground">
-          {deals.length} deals
-        </span>
+    <div className="w-80 flex-shrink-0">
+      <div className="mb-3">
+        <h2 className="font-semibold text-sm flex items-center">
+          <span className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: stage.color }} />
+          {stage.name}
+          <span className="ml-2 text-muted-foreground">({deals.length})</span>
+        </h2>
       </div>
+
       <div
         ref={setNodeRef}
-        className="h-full overflow-y-auto"
+        className="min-h-[500px] p-2 rounded-lg bg-muted/50"
       >
-        <SortableContext items={deals} strategy={verticalListSortingStrategy}>
-          {deals.map((deal) => (
-            <SortableDealCard key={deal.id} deal={deal} />
-          ))}
-        </SortableContext>
+        {deals.map((deal) => (
+          <DealCard key={deal.id} deal={deal} />
+        ))}
       </div>
     </div>
   )

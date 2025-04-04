@@ -14,7 +14,9 @@ export function PipelineBoard() {
     const dealId = active.id as string
     const toStage = over.id as string
 
-    moveDeal(dealId, toStage)
+    if (dealId && toStage) {
+      moveDeal(dealId, toStage)
+    }
   }
 
   return (
