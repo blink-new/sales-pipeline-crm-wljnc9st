@@ -41,17 +41,30 @@ export function Navigation() {
   const { isCollapsed, toggle } = useSidebar()
   
   const NavLink = ({ to, icon: Icon, label }: { to: string; icon: any; label: string }) => {
+    const isActive = location.pathname === to
     const content = (
       <Link
         to={to}
         className={cn(
-          'flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent',
+          'flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300',
           isCollapsed && 'justify-center px-2',
-          location.pathname === to ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-accent-foreground'
+          isActive 
+            ? 'bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 text-primary shadow-sm' 
+            : 'text-muted-foreground hover:bg-gradient-to-r hover:from-indigo-500/10 hover:via-purple-500/10 hover:to-pink-500/10 hover:text-primary'
         )}
       >
-        <Icon className="h-5 w-5" />
-        {!isCollapsed && <span className="ml-3">{label}</span>}
+        <Icon className={cn(
+          "h-5 w-5 transition-all duration-300",
+          isActive && "text-indigo-600"
+        )} />
+        {!isCollapsed && (
+          <span className={cn(
+            "ml-3 transition-all duration-300",
+            isActive && "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"
+          )}>
+            {label}
+          </span>
+        )}
       </Link>
     )
 
@@ -62,7 +75,7 @@ export function Navigation() {
             <TooltipTrigger asChild>
               {content}
             </TooltipTrigger>
-            <TooltipContent side="right">
+            <TooltipContent side="right" className="font-medium">
               <p>{label}</p>
             </TooltipContent>
           </Tooltip>
@@ -77,11 +90,11 @@ export function Navigation() {
     <div className="flex h-full flex-col justify-between">
       <div className="space-y-4">
         <div className={cn(
-          "flex h-16 items-center border-b",
+          "flex h-16 items-center border-b bg-gradient-to-b from-background to-background/80 backdrop-blur-sm",
           isCollapsed ? "justify-center px-2" : "px-6"
         )}>
           {!isCollapsed && (
-            <Link to="/" className="text-xl font-bold">
+            <Link to="/" className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-xl font-bold text-transparent">
               DealFlow
             </Link>
           )}
@@ -90,22 +103,22 @@ export function Navigation() {
               variant="ghost"
               size="icon"
               className={cn(
-                "ml-auto",
+                "ml-auto hover:bg-gradient-to-r hover:from-indigo-500/10 hover:via-purple-500/10 hover:to-pink-500/10",
                 isCollapsed && "mx-auto"
               )}
               onClick={toggle}
             >
               {isCollapsed ? (
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 text-indigo-600" />
               ) : (
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4 text-indigo-600" />
               )}
             </Button>
           )}
         </div>
         
         <nav className={cn(
-          "space-y-1",
+          "space-y-1.5",
           isCollapsed ? "px-2" : "px-4"
         )}>
           <NavLink
@@ -122,48 +135,52 @@ export function Navigation() {
 
         {!isCollapsed && (
           <div className="px-4">
-            <Separator />
-            <div className="my-4 px-3">
+            <Separator className="my-4 bg-gradient-to-r from-indigo-200/40 via-purple-200/40 to-pink-200/40" />
+            <div className="px-3">
               <Button 
-                className="relative w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white transition-all hover:from-violet-500 hover:to-indigo-500"
+                className="group relative w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white transition-all hover:shadow-lg hover:shadow-indigo-500/25"
                 size="lg"
               >
-                <div className="absolute -inset-1 -z-10 animate-pulse rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 opacity-20 blur" />
-                <Sparkles className="mr-2 h-4 w-4" />
-                Upgrade to Pro
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="h-[500%] w-[100%] animate-[spin_4s_linear_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                </div>
+                <span className="relative flex items-center justify-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Upgrade to Pro
+                </span>
               </Button>
             </div>
           </div>
         )}
       </div>
 
-      <div className="sticky bottom-0 border-t bg-background p-4">
+      <div className="sticky bottom-0 border-t bg-gradient-to-t from-background to-background/80 p-4 backdrop-blur-sm">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
               className={cn(
-                "w-full",
+                "w-full hover:bg-gradient-to-r hover:from-indigo-500/10 hover:via-purple-500/10 hover:to-pink-500/10",
                 isCollapsed ? "px-2" : "justify-start"
               )}
             >
-              <Avatar className="h-8 w-8">
+              <Avatar className="h-8 w-8 ring-2 ring-indigo-500/20">
                 <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-                <AvatarFallback>SC</AvatarFallback>
+                <AvatarFallback className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white">JD</AvatarFallback>
               </Avatar>
               {!isCollapsed && (
                 <div className="ml-3 flex flex-col items-start text-sm">
-                  <span className="font-medium">John Doe</span>
+                  <span className="font-medium text-primary">John Doe</span>
                   <span className="text-xs text-muted-foreground">john@example.com</span>
                 </div>
               )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -175,14 +192,22 @@ export function Navigation() {
   if (isMobile) {
     return (
       <>
-        <div className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-background px-4">
-          <Link to="/" className="text-xl font-bold">
+        <div className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-gradient-to-b from-background to-background/80 px-4 backdrop-blur-sm">
+          <Link to="/" className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-xl font-bold text-transparent">
             DealFlow
           </Link>
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="hover:bg-gradient-to-r hover:from-indigo-500/10 hover:via-purple-500/10 hover:to-pink-500/10"
+              >
+                {isOpen ? (
+                  <X className="h-5 w-5 text-indigo-600" />
+                ) : (
+                  <Menu className="h-5 w-5 text-indigo-600" />
+                )}
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-72 p-0">
@@ -196,7 +221,7 @@ export function Navigation() {
 
   return (
     <div className={cn(
-      "fixed inset-y-0 z-50 flex flex-col border-r bg-background transition-all duration-300",
+      "fixed inset-y-0 z-50 flex flex-col border-r bg-gradient-to-b from-background to-background/80 backdrop-blur-sm transition-all duration-300",
       isCollapsed ? "w-16" : "w-72"
     )}>
       <NavContent />
