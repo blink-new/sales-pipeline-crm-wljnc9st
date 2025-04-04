@@ -41,12 +41,14 @@ export function Navigation() {
   const { isCollapsed, toggle } = useSidebar()
   
   const NavLink = ({ to, icon: Icon, label }: { to: string; icon: any; label: string }) => {
+    const isActive = location.pathname === to || (to === '/pipeline' && location.pathname === '/')
     const content = (
       <Link
         to={to}
         className={cn(
-          'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent',
-          location.pathname === to ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-accent-foreground'
+          'group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent',
+          isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-accent-foreground',
+          isCollapsed && 'justify-center px-2'
         )}
       >
         <Icon className="h-4 w-4" />
@@ -103,7 +105,10 @@ export function Navigation() {
           )}
         </div>
         
-        <nav className="space-y-2 px-4">
+        <nav className={cn(
+          "space-y-2",
+          isCollapsed ? "px-2" : "px-4"
+        )}>
           <NavLink
             to="/pipeline"
             icon={GitBranch}
@@ -116,7 +121,10 @@ export function Navigation() {
           />
         </nav>
 
-        <div className="px-4">
+        <div className={cn(
+          "px-4",
+          isCollapsed && "px-2"
+        )}>
           <Separator />
           {!isCollapsed && (
             <div className="my-4 px-3">
