@@ -1,74 +1,78 @@
 
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { Deal, Stage } from '../types'
 
 interface DealStore {
   deals: Deal[]
   stages: Stage[]
   addDeal: (deal: Deal) => void
-  updateDeal: (dealId: string, updatedDeal: Deal) => void
-  moveDeal: (dealId: string, newStage: string) => void
+  removeDeal: (id: string) => void
+  moveDeal: (id: string, toStage: string) => void
   addStage: (stage: Stage) => void
-  updateStage: (stageId: string, updatedStage: Stage) => void
-  removeStage: (stageId: string) => void
+  removeStage: (id: string) => void
+  updateStage: (id: string, stage: Stage) => void
   reorderStages: (oldIndex: number, newIndex: number) => void
 }
 
-const defaultStages: Stage[] = [
-  { id: 'friend', name: 'Friend', color: '#E9D8FD' },
-  { id: 'lead', name: 'Lead', color: '#BEE3F8' },
-  { id: 'contact-made', name: 'Contact Made', color: '#9AE6B4' },
-  { id: 'proposal', name: 'Proposal', color: '#FBD38D' },
-  { id: 'negotiation', name: 'Negotiation', color: '#FEB2B2' }
-]
+const defaultDeal: Deal = {
+  id: '1',
+  name: 'Example Deal',
+  value: 50000,
+  stage: 'lead',
+  probability: 50,
+  expectedCloseDate: new Date(),
+  companyId: '1',
+  contactId: '1',
+  description: 'Example deal for demonstration',
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
 
-const useDealStore = create<DealStore>((set) => ({
-  deals: [],
-  stages: defaultStages,
-  
-  addDeal: (deal) => set((state) => ({ 
-    deals: [...state.deals, deal] 
-  })),
-  
-  updateDeal: (dealId, updatedDeal) => set((state) => ({
-    deals: state.deals.map((deal) =>
-      deal.id === dealId ? updatedDeal : deal
-    ),
-  })),
-  
-  moveDeal: (dealId, newStage) => set((state) => ({
-    deals: state.deals.map((deal) =>
-      deal.id === dealId ? { ...deal, stage: newStage } : deal
-    ),
-  })),
-
-  addStage: (stage) => set((state) => ({
-    stages: [...state.stages, stage]
-  })),
-
-  updateStage: (stageId, updatedStage) => set((state) => ({
-    stages: state.stages.map((stage) =>
-      stage.id === stageId ? updatedStage : stage
-    ),
-  })),
-
-  removeStage: (stageId) => set((state) => ({
-    stages: state.stages.filter((stage) => stage.id !== stageId),
-    deals: state.stages.length > 1 
-      ? state.deals.map(deal => 
-          deal.stage === stageId 
-            ? { ...deal, stage: state.stages.find(s => s.id !== stageId)?.id || '' }
-            : deal
-        )
-      : state.deals.filter(deal => deal.stage !== stageId)
-  })),
-
-  reorderStages: (oldIndex, newIndex) => set((state) => {
-    const newStages = [...state.stages]
-    const [removed] = newStages.splice(oldIndex, 1)
-    newStages.splice(newIndex, 0, removed)
-    return { stages: newStages }
-  }),
-}))
+const useDealStore = create<DealStore>()(
+  persist(
+    (set) => ({
+      deals: [defaultDeal],
+      stages: [
+        { id: 'lead', name: 'Lead', color: '#6B7280' },
+        { id: 'contact', name: 'Contact Made', color: '#3B82F6' },
+        { id: 'proposal', name: 'Proposal', color: '#EAB308' },
+        { id: 'negotiation', name: 'Negotiation', color: '#F97316' },
+        { id: 'closed', name: 'Closed Won', color: '#22C55E' },
+        { id: 'lost', name: 'Closed Lost', color: '#EF4444' }
+      ],
+      addDeal: (deal) => set((state) => ({ deals: [...state.deals, deal] })),
+      removeDeal: (id) => set((state) => ({
+        deals: state.deals.filter((d) => d.id !== id),
+      })),
+      moveDeal: (id, toStage) => set((state) => ({
+        deals: state.deals.map((d) =>
+          d.id === id ? { ...d, stage: toStage } : d
+        ),
+      })),
+      addStage: (stage) => set((state) => ({
+        stages: [...state.stages, stage],
+      })),
+      removeStage: (id) => set((state) => ({
+        stages: state.stages.filter((s) => s.id !== id),
+        deals: state.deals.filter((d) => d.stage !== id),
+      })),
+      updateStage: (id, stage) => set((state) => ({
+        stages: state.stages.map((s) =>
+          s.id === id ? stage : s
+        ),
+      })),
+      reorderStages: (oldIndex, newIndex) => set((state) => {
+        const stages = [...state.stages]
+        const [removed] = stages.splice(oldIndex, 1)
+        stages.splice(newIndex, 0, removed)
+        return { stages }
+      }),
+    }),
+    {
+      name: 'deal-store',
+    }
+  )
+)
 
 export default useDealStore

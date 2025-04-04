@@ -15,22 +15,15 @@ export function SortableDealCard({ deal }: SortableDealCardProps) {
     setNodeRef,
     transform,
     transition,
-    isDragging,
   } = useSortable({ id: deal.id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <DealCard deal={deal} />
     </div>
   )

@@ -1,52 +1,33 @@
 
-import { useState } from 'react'
+import { format } from 'date-fns'
 import { Deal } from '../types'
-import { cn } from '../lib/utils'
-import { Card } from './ui/card'
+import { Card, CardContent, CardHeader } from './ui/card'
 import { Badge } from './ui/badge'
-import { EditDealDialog } from './EditDealDialog'
+import { formatCurrency } from '../lib/utils'
 
 interface DealCardProps {
   deal: Deal
-  className?: string
 }
 
-export function DealCard({ deal, className }: DealCardProps) {
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
-
-  const getProbabilityVariant = (probability: number) => {
-    if (probability >= 70) return 'success'
-    if (probability >= 40) return 'warning'
-    return 'destructive'
-  }
-
+export function DealCard({ deal }: DealCardProps) {
   return (
-    <>
-      <Card 
-        className={cn(
-          "p-3 hover:shadow-md transition-shadow cursor-pointer",
-          className
-        )}
-        onClick={() => setEditDialogOpen(true)}
-      >
-        <div className="space-y-2">
-          <div className="font-medium">{deal.name}</div>
-          <div className="flex items-center justify-between text-sm">
-            <div className="font-medium text-primary">
-              ${deal.value?.toLocaleString() || '0'}
-            </div>
-            <Badge variant={getProbabilityVariant(deal.probability)}>
-              {deal.probability}%
-            </Badge>
+    <Card className="w-full mb-3 cursor-move hover:shadow-md transition-shadow">
+      <CardHeader className="p-4 pb-2">
+        <div className="flex items-start justify-between">
+          <h3 className="font-semibold text-sm line-clamp-2">{deal.name}</h3>
+          <Badge variant="secondary" className="ml-2">
+            {formatCurrency(deal.value)}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4 pt-0">
+        <div className="text-sm text-muted-foreground">
+          <div className="flex items-center justify-between">
+            <span>{deal.probability}% probability</span>
+            <span>{format(deal.expectedCloseDate, 'MMM d')}</span>
           </div>
         </div>
-      </Card>
-
-      <EditDealDialog 
-        deal={deal}
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-      />
-    </>
+      </CardContent>
+    </Card>
   )
 }
