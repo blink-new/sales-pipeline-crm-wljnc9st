@@ -1,8 +1,6 @@
 
 import { useDroppable } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Stage, Deal } from '../types'
-import { DealCard } from './DealCard'
 import { cn } from '../lib/utils'
 import { SortableDealCard } from './SortableDealCard'
 
@@ -36,11 +34,9 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
         ref={setNodeRef}
         className="h-full overflow-y-auto"
       >
-        <SortableContext items={deals} strategy={verticalListSortingStrategy}>
-          {deals.map((deal) => (
-            <SortableDealCard key={deal.id} deal={deal} />
-          ))}
-        </SortableContext>
+        {deals.map((deal) => (
+          <SortableDealCard key={deal.id} deal={deal} />
+        ))}
       </div>
     </div>
   )
