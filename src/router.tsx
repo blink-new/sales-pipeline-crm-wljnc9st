@@ -12,7 +12,7 @@ export const router = createBrowserRouter([
     element: <SaasLayout />,
     children: [
       {
-        index: true,
+        path: 'pipeline',
         element: <Pipeline />,
       },
       {
@@ -26,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: 'settings',
         element: <Settings />,
+      },
+      {
+        index: true,
+        element: <Pipeline />,
       },
     ],
   },
