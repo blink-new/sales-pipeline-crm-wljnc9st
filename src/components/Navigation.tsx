@@ -1,5 +1,5 @@
 
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '../lib/utils'
 import { Button } from './ui/button'
 import { 
@@ -36,6 +36,7 @@ import {
 
 export function Navigation() {
   const location = useLocation()
+  const navigate = useNavigate()
   const isMobile = useIsMobile()
   const [isOpen, setIsOpen] = useState(false)
   const { isCollapsed, toggle } = useSidebar()
@@ -131,6 +132,7 @@ export function Navigation() {
               <Button 
                 className="relative w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white transition-all hover:from-violet-500 hover:to-indigo-500"
                 size="lg"
+                onClick={() => navigate('/pricing')}
               >
                 <div className="absolute -inset-1 -z-10 animate-pulse rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 opacity-20 blur" />
                 <Sparkles className="mr-2 h-4 w-4" />
