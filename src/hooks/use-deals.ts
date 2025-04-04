@@ -1,46 +1,43 @@
 
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { Deal, Stage } from '@/lib/types'
 
 interface DealsState {
   deals: Deal[]
   stages: Stage[]
-  addDeal: (deal: Omit<Deal, 'id'>) => void
-  updateDealStage: (id: string, stage: Stage) => void
+  addDeal: (deal: Deal) => void
+  updateDealStage: (id: string, stageId: string) => void
   getDeal: (id: string) => Deal | undefined
 }
 
-export const useDeals = create<DealsState>((set, get) => ({
-  deals: [
-    {
-      id: '1',
-      name: 'Enterprise SaaS Deal',
-      company: 'Acme Corp',
-      value: 50000,
-      status: 'active',
-      stage: 'Prospect',
-    },
-    {
-      id: '2',
-      name: 'SMB Package',
-      company: 'Small Biz Inc',
-      value: 10000,
-      status: 'active',
-      stage: 'Lead',
-    },
-    // Add more sample deals as needed
-  ],
-  stages: ['Lead', 'Prospect', 'Proposal', 'Negotiation', 'Closed'],
-  
-  addDeal: (deal) => set((state) => ({
-    deals: [...state.deals, { ...deal, id: Math.random().toString() }],
-  })),
-  
-  updateDealStage: (id, stage) => set((state) => ({
-    deals: state.deals.map((deal) =>
-      deal.id === id ? { ...deal, stage } : deal
-    ),
-  })),
+export const useDeals = create<DealsState>()(
+  persist(
+    (set, get) => ({
+      deals: [],
+      stages: [
+        { id: 'lead', name: 'Lead', color: '#6B7280' },
+        { id: 'contact', name: 'Contact Made', color: '#3B82F6' },
+        { id: 'proposal', name: 'Proposal', color: '#EAB308' },
+        { id: 'negotiation', name: 'Negotiation', color: '#F97316' },
+        { id: 'closed', name: 'Closed Won', color: '#22C55E' },
+        { id: 'lost', name: 'Closed Lost', color: '#EF4444' }
+      ],
+      
+      addDeal: (deal) => set((state) => ({
+        deals: [...state.deals, deal],
+      })),
+      
+      updateDealStage: (id, stageId) => set((state) => ({
+        deals: state.deals.map((deal) =>
+          deal.id === id ? { ...deal, stage: stageId } : deal
+        ),
+      })),
 
-  getDeal: (id) => get().deals.find((deal) => deal.id === id),
-}))
+      getDeal: (id) => get().deals.find((deal) => deal.id === id),
+    }),
+    {
+      name: 'deals-storage',
+    }
+  )
+)

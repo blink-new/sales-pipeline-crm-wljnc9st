@@ -21,13 +21,21 @@ export function NewDealDialog({ open, onOpenChange }: NewDealDialogProps) {
     e.preventDefault()
     if (!name.trim()) return
 
-    addDeal({
+    const newDeal = {
+      id: crypto.randomUUID(),
       name: name.trim(),
-      company: company.trim(),
       value: parseFloat(value) || 0,
-      status: 'active',
-      stage: 'Lead' // This is the correct initial stage from our stages array
-    })
+      stage: 'lead', // Using correct stage ID
+      probability: 20,
+      expectedCloseDate: new Date(),
+      companyId: company.trim(),
+      contactId: '',
+      description: '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    addDeal(newDeal)
 
     setName('')
     setCompany('')
