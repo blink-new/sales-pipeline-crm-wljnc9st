@@ -8,7 +8,9 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-  closestCorners 
+  closestCorners,
+  DragOverlay,
+  defaultDropAnimationSideEffects
 } from '@dnd-kit/core'
 import { 
   arrayMove,
@@ -19,6 +21,17 @@ import { Stage } from '../types'
 import useDealStore from '../store/dealStore'
 import { PipelineColumn } from './PipelineColumn'
 import { useState } from 'react'
+import { DealCard } from './DealCard'
+
+const dropAnimation = {
+  sideEffects: defaultDropAnimationSideEffects({
+    styles: {
+      active: {
+        opacity: '0.5',
+      },
+    },
+  }),
+}
 
 export function PipelineBoard() {
   const { deals, stages, moveDeal } = useDealStore()
@@ -51,32 +64,38 @@ export function PipelineBoard() {
     const activeId = active.id as string
     const overId = over.id as string
 
-    // Find the stages
+    // Find the active deal
     const activeDeal = deals.find(deal => deal.id === activeId)
     if (!activeDeal) return
 
-    // If over a stage container
-    if (stages.find(stage => stage.id === overId)) {
-      if (activeDeal.stage !== overId) {
-        moveDeal(activeId, overId)
-      }
+    // If over a stage
+    const overStage = stages.find(stage => stage.id === overId)
+    if (overStage && activeDeal.stage !== overId) {
+      moveDeal(activeId, overId)
     }
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    setActiveId(null)
 
-    if (!over) return
+    if (!over) {
+      setActiveId(null)
+      return
+    }
 
     const activeId = active.id as string
     const overId = over.id as string
 
-    // If dropped over a stage
-    if (stages.find(stage => stage.id === overId)) {
+    // Find the stages
+    const overStage = stages.find(stage => stage.id === overId)
+    if (overStage) {
       moveDeal(activeId, overId)
     }
+
+    setActiveId(null)
   }
+
+  const activeDeal = activeId ? deals.find(deal => deal.id === activeId) : null
 
   return (
     <DndContext
@@ -87,17 +106,23 @@ export function PipelineBoard() {
       onDragEnd={handleDragEnd}
     >
       <div className="flex gap-4 h-[calc(100vh-12rem)] overflow-x-auto p-4">
-        <SortableContext items={stages} strategy={horizontalListSortingStrategy}>
-          {stages.map((stage: Stage) => (
-            <PipelineColumn
-              key={stage.id}
-              stage={stage}
-              deals={deals.filter((deal) => deal.stage === stage.id)}
-              isDropping={activeId ? deals.find(d => d.id === activeId)?.stage === stage.id : false}
-            />
-          ))}
-        </SortableContext>
+        {stages.map((stage: Stage) => (
+          <PipelineColumn
+            key={stage.id}
+            stage={stage}
+            deals={deals.filter((deal) => deal.stage === stage.id)}
+            isDropping={activeId ? deals.find(d => d.id === activeId)?.stage === stage.id : false}
+          />
+        ))}
       </div>
+
+      <DragOverlay dropAnimation={dropAnimation}>
+        {activeId && activeDeal ? (
+          <div className="w-80">
+            <DealCard deal={activeDeal} />
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   )
 }
