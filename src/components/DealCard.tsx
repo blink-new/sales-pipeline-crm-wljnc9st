@@ -1,63 +1,47 @@
 
-import { format, parseISO } from 'date-fns'
-import { Deal } from '../types'
-import { Card, CardContent, CardHeader } from './ui/card'
-import { Badge } from './ui/badge'
-import { formatCurrency } from '../lib/utils'
-import { useState } from 'react'
-import { EditDealDialog } from './EditDealDialog'
-import { useDraggable } from '@dnd-kit/core'
+import { cn } from "@/lib/utils"
+import { Card } from "./ui/card"
+import { Badge } from "./ui/badge"
+import { Deal } from "@/lib/types"
+import { useNavigate } from "react-router-dom"
 
 interface DealCardProps {
   deal: Deal
+  className?: string
 }
 
-export function DealCard({ deal }: DealCardProps) {
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: deal.id,
-  })
+export function DealCard({ deal, className }: DealCardProps) {
+  const navigate = useNavigate()
 
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    navigate(`/deals/${deal.id}`)
+  }
 
   return (
-    <>
-      <div
-        ref={setNodeRef}
-        style={style}
-        {...listeners}
-        {...attributes}
-        onClick={() => setEditDialogOpen(true)}
-      >
-        <Card className="w-full mb-3 cursor-move hover:shadow-md transition-shadow">
-          <CardHeader className="p-4 pb-2">
-            <div className="flex items-start justify-between">
-              <h3 className="font-semibold text-sm line-clamp-2">{deal.name}</h3>
-              <Badge variant="secondary" className="ml-2">
-                {formatCurrency(deal.value)}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="text-sm text-muted-foreground">
-              <div className="flex items-center justify-between">
-                <span>{deal.probability || 0}% probability</span>
-                {deal.expectedCloseDate && (
-                  <span>{format(parseISO(deal.expectedCloseDate), 'MMM d')}</span>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+    <Card 
+      className={cn(
+        "flex cursor-pointer flex-col gap-3 p-4 transition-all hover:shadow-md",
+        className
+      )}
+      onClick={handleClick}
+    >
+      <div className="flex items-start justify-between">
+        <div>
+          <h3 className="font-semibold">{deal.name}</h3>
+          <p className="text-sm text-muted-foreground">{deal.company}</p>
+        </div>
+        <Badge variant={deal.status === 'active' ? 'default' : 'secondary'}>
+          {deal.status}
+        </Badge>
       </div>
-
-      <EditDealDialog 
-        deal={deal}
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-      />
-    </>
+      <div className="flex items-center gap-2">
+        <div className="text-sm">
+          <span className="text-muted-foreground">Value: </span>
+          <span className="font-medium">${deal.value.toLocaleString()}</span>
+        </div>
+      </div>
+    </Card>
   )
 }
