@@ -18,8 +18,8 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
     <div
       ref={setNodeRef}
       className={cn(
-        'flex-shrink-0 w-80 bg-muted/30 rounded-lg p-4',
-        isOver && 'ring-2 ring-primary/20'
+        'flex-shrink-0 w-80 bg-muted/30 rounded-lg p-4 transition-colors duration-200',
+        isOver && 'bg-muted/50 ring-2 ring-primary'
       )}
     >
       <div className="flex items-center justify-between mb-4">
@@ -28,7 +28,7 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
           <h3 className="font-semibold">{stage.name}</h3>
         </div>
         <span className="text-sm text-muted-foreground">
-          {deals.length} deals
+          {deals.length} {deals.length === 1 ? 'deal' : 'deals'}
         </span>
       </div>
       <div className="space-y-3">
