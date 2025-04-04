@@ -2,7 +2,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import SaasLayout from './components/SaasLayout'
 import { Pipeline } from './pages/Pipeline'
-import Pricing from './pages/Pricing'
+import { PricingPage } from './pages/Pricing'
 import ProfilePage from './pages/ProfilePage'
 import Settings from './pages/Settings'
 
@@ -17,7 +17,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'pricing',
-        element: <Pricing />,
+        element: <PricingPage />,
       },
       {
         path: 'profile',
