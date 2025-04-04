@@ -2,7 +2,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '../lib/utils'
 import { Button } from './ui/button'
-import { PipelineIcon, Settings } from 'lucide-react'
+import { GitBranch, Settings } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +29,7 @@ export function Navigation() {
                 location.pathname === '/pipeline' ? 'text-primary' : 'text-muted-foreground'
               )}
             >
-              <PipelineIcon className="h-4 w-4" />
+              <GitBranch className="h-4 w-4" />
               Pipeline
             </Link>
             <Link
