@@ -5,7 +5,11 @@ import { useIsMobile } from '../hooks/use-mobile'
 import { cn } from '../lib/utils'
 import { useSidebar } from '../hooks/use-sidebar'
 
-export function SaasLayout() {
+interface SaasLayoutProps {
+  children?: React.ReactNode
+}
+
+export function SaasLayout({ children }: SaasLayoutProps) {
   const isMobile = useIsMobile()
   const { isCollapsed } = useSidebar()
   
@@ -20,7 +24,7 @@ export function SaasLayout() {
             ? "ml-16 p-8"
             : "ml-72 p-8"
       )}>
-        <Outlet />
+        {children || <Outlet />}
       </main>
     </div>
   )

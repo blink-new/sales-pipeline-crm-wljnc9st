@@ -8,14 +8,14 @@ import { SaasLayout } from './components/SaasLayout'
 function App() {
   return (
     <Router>
-      <SaasLayout>
-        <Routes>
+      <Routes>
+        <Route element={<SaasLayout />}>
           <Route path="/" element={<Pipeline />} />
           <Route path="/pipeline" element={<Pipeline />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/profile" element={<ProfilePage />} />
-        </Routes>
-      </SaasLayout>
+        </Route>
+      </Routes>
     </Router>
   )
 }
