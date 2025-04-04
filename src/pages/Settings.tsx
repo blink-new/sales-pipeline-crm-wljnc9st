@@ -11,7 +11,7 @@ import { GripVertical, Plus, Trash2 } from 'lucide-react'
 import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useToast } from '../hooks/use-toast'
+import { useToast } from '../components/ui/use-toast'
 
 function StageItem({ stage }: { stage: Stage }) {
   const { removeStage, updateStage } = useDealStore()
