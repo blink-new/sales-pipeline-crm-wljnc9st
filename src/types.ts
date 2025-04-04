@@ -10,4 +10,5 @@ export interface Deal {
 export interface Stage {
   id: string
   name: string
+  color: string
 }
