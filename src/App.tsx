@@ -5,7 +5,7 @@ import { Pipeline } from './pages/Pipeline'
 import { Settings } from './pages/Settings'
 import { Toaster } from './components/ui/toaster'
 
-export function App() {
+export default function App() {
   return (
     <Router>
       <Routes>
