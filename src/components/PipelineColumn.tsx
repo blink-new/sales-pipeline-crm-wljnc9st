@@ -1,16 +1,16 @@
 
 import { useMemo } from 'react'
-import { Deal } from '../types'
+import { Deal, Stage } from '../types'
 import { SortableDealCard } from './SortableDealCard'
 import { formatCurrency } from '../lib/utils'
 
 interface PipelineColumnProps {
-  title: string
-  color: string
+  stage: Stage
   deals: Deal[]
+  isDropping: boolean
 }
 
-export function PipelineColumn({ title, color, deals }: PipelineColumnProps) {
+export function PipelineColumn({ stage, deals, isDropping }: PipelineColumnProps) {
   const totalValue = useMemo(() => {
     return deals.reduce((sum, deal) => sum + deal.value, 0)
   }, [deals])
@@ -20,11 +20,15 @@ export function PipelineColumn({ title, color, deals }: PipelineColumnProps) {
   }, [deals])
 
   return (
-    <div className="w-80 shrink-0 p-2">
+    <div 
+      className={`w-80 shrink-0 p-2 rounded-lg transition-colors ${
+        isDropping ? 'bg-muted/50' : ''
+      }`}
+    >
       <div className="mb-3">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">
-            {title}
+            {stage.name}
             <span className="ml-2 text-muted-foreground text-sm font-normal">
               {deals.length}
             </span>
@@ -37,7 +41,7 @@ export function PipelineColumn({ title, color, deals }: PipelineColumnProps) {
           </div>
         </div>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-3 min-h-[200px]">
         {deals.map((deal) => (
           <SortableDealCard key={deal.id} deal={deal} />
         ))}
