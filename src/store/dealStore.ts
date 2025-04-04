@@ -13,6 +13,7 @@ interface DealStore {
   removeStage: (id: string) => void
   updateStage: (id: string, stage: Stage) => void
   reorderStages: (oldIndex: number, newIndex: number) => void
+  updateDeal: (id: string, deal: Partial<Deal>) => void
 }
 
 const defaultDeal: Deal = {
@@ -21,12 +22,12 @@ const defaultDeal: Deal = {
   value: 50000,
   stage: 'lead',
   probability: 50,
-  expectedCloseDate: new Date(),
+  expectedCloseDate: new Date().toISOString(),
   companyId: '1',
   contactId: '1',
   description: 'Example deal for demonstration',
-  createdAt: new Date(),
-  updatedAt: new Date()
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 }
 
 const useDealStore = create<DealStore>()(
@@ -68,6 +69,11 @@ const useDealStore = create<DealStore>()(
         stages.splice(newIndex, 0, removed)
         return { stages }
       }),
+      updateDeal: (id, deal) => set((state) => ({
+        deals: state.deals.map((d) =>
+          d.id === id ? { ...d, ...deal } : d
+        ),
+      })),
     }),
     {
       name: 'deal-store',

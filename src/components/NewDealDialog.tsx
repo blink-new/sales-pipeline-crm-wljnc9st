@@ -23,12 +23,17 @@ export function NewDealDialog({ open, onOpenChange }: NewDealDialogProps) {
     
     if (!name || !stage) return
 
+    const now = new Date().toISOString()
+    
     addDeal({
       id: crypto.randomUUID(),
       name,
       value: parseFloat(value) || 0,
       stage,
-      createdAt: new Date().toISOString()
+      probability: 50,
+      expectedCloseDate: now,
+      createdAt: now,
+      updatedAt: now
     })
 
     // Reset form

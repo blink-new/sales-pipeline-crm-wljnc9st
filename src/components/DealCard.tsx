@@ -1,5 +1,5 @@
 
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { Deal } from '../types'
 import { Card, CardContent, CardHeader } from './ui/card'
 import { Badge } from './ui/badge'
@@ -23,8 +23,10 @@ export function DealCard({ deal }: DealCardProps) {
       <CardContent className="p-4 pt-0">
         <div className="text-sm text-muted-foreground">
           <div className="flex items-center justify-between">
-            <span>{deal.probability}% probability</span>
-            <span>{format(deal.expectedCloseDate, 'MMM d')}</span>
+            <span>{deal.probability || 0}% probability</span>
+            {deal.expectedCloseDate && (
+              <span>{format(parseISO(deal.expectedCloseDate), 'MMM d')}</span>
+            )}
           </div>
         </div>
       </CardContent>
