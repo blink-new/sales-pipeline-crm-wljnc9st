@@ -1,7 +1,7 @@
 
 import { createBrowserRouter } from 'react-router-dom'
 import { SaasLayout } from './components/SaasLayout'
-import { Pipeline } from './pages/Pipeline'
+import { Pipeline } from './components/Pipeline'
 import { PricingPage } from './pages/Pricing'
 import { ProfilePage } from './pages/ProfilePage'
 import { Settings } from './pages/Settings'
