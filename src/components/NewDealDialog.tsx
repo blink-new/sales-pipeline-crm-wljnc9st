@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { useState } from 'react'
-import useDealStore from '../store/dealStore'
+import { useDeals } from '@/hooks/use-deals'
 
 interface NewDealDialogProps {
   open: boolean
@@ -13,22 +13,24 @@ interface NewDealDialogProps {
 
 export function NewDealDialog({ open, onOpenChange }: NewDealDialogProps) {
   const [name, setName] = useState('')
+  const [company, setCompany] = useState('')
   const [value, setValue] = useState('')
-  const { addDeal } = useDealStore()
+  const { addDeal } = useDeals()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return
 
     addDeal({
-      id: crypto.randomUUID(),
       name: name.trim(),
+      company: company.trim(),
       value: parseFloat(value) || 0,
-      stage: 'lead',
-      createdAt: new Date().toISOString(),
+      status: 'active',
+      stage: 'Lead'
     })
 
     setName('')
+    setCompany('')
     setValue('')
     onOpenChange(false)
   }
@@ -47,6 +49,15 @@ export function NewDealDialog({ open, onOpenChange }: NewDealDialogProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter deal name"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="company">Company</Label>
+            <Input
+              id="company"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              placeholder="Enter company name"
             />
           </div>
           <div className="space-y-2">
