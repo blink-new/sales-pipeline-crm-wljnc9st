@@ -152,8 +152,8 @@ export function Navigation() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuItem>
-              Profile
+            <DropdownMenuItem asChild>
+              <Link to="/profile">Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
               Sign out
