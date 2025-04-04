@@ -16,6 +16,7 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
 
   return (
     <div
+      ref={setNodeRef}
       className={cn(
         'flex-shrink-0 w-80 bg-muted/30 rounded-lg p-4',
         isOver && 'ring-2 ring-primary/20'
@@ -30,10 +31,7 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
           {deals.length} deals
         </span>
       </div>
-      <div
-        ref={setNodeRef}
-        className="h-full overflow-y-auto"
-      >
+      <div className="space-y-3">
         {deals.map((deal) => (
           <SortableDealCard key={deal.id} deal={deal} />
         ))}
