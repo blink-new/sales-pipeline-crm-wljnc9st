@@ -6,6 +6,7 @@ interface DealStore {
   deals: Deal[]
   stages: Stage[]
   addDeal: (deal: Deal) => void
+  updateDeal: (dealId: string, updatedDeal: Deal) => void
   moveDeal: (dealId: string, newStage: string) => void
   addStage: (stage: Stage) => void
   updateStage: (stageId: string, updatedStage: Stage) => void
@@ -29,6 +30,12 @@ const useDealStore = create<DealStore>((set) => ({
     deals: [...state.deals, deal] 
   })),
   
+  updateDeal: (dealId, updatedDeal) => set((state) => ({
+    deals: state.deals.map((deal) =>
+      deal.id === dealId ? updatedDeal : deal
+    ),
+  })),
+  
   moveDeal: (dealId, newStage) => set((state) => ({
     deals: state.deals.map((deal) =>
       deal.id === dealId ? { ...deal, stage: newStage } : deal
@@ -47,7 +54,6 @@ const useDealStore = create<DealStore>((set) => ({
 
   removeStage: (stageId) => set((state) => ({
     stages: state.stages.filter((stage) => stage.id !== stageId),
-    // Also remove deals in this stage or move them to first available stage
     deals: state.stages.length > 1 
       ? state.deals.map(deal => 
           deal.stage === stageId 
