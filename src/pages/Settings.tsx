@@ -7,7 +7,7 @@ import useDealStore from '../store/dealStore'
 import { ChromePicker } from 'react-color'
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover'
 import { cn } from '../lib/utils'
-import { DragHandle, Plus, Trash2 } from 'lucide-react'
+import { GripVertical, Plus, Trash2 } from 'lucide-react'
 import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -40,7 +40,7 @@ function StageItem({ stage }: { stage: Stage }) {
       )}
     >
       <div {...attributes} {...listeners}>
-        <DragHandle className="h-5 w-5 text-muted-foreground" />
+        <GripVertical className="h-5 w-5 text-muted-foreground" />
       </div>
       <Input
         value={stage.name}
