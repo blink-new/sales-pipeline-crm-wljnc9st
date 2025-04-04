@@ -23,11 +23,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useState } from 'react'
 import { Separator } from './ui/separator'
-import { useMobile } from '../hooks/use-mobile'
+import { useIsMobile } from '../hooks/use-mobile'
 
 export function Navigation() {
   const location = useLocation()
-  const isMobile = useMobile()
+  const isMobile = useIsMobile()
   const [isOpen, setIsOpen] = useState(false)
   
   const NavContent = () => (

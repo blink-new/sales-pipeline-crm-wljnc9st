@@ -1,10 +1,11 @@
 
 import { Outlet } from 'react-router-dom'
 import { Navigation } from './Navigation'
-import { useMobile } from '../hooks/use-mobile'
+import { useIsMobile } from '../hooks/use-mobile'
+import { cn } from '../lib/utils'
 
 export function SaasLayout() {
-  const isMobile = useMobile()
+  const isMobile = useIsMobile()
   
   return (
     <div className="min-h-screen bg-background">
