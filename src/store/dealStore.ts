@@ -1,103 +1,78 @@
 
 import { create } from 'zustand'
-import { Deal, Stage, defaultStages } from '../types'
+import { persist } from 'zustand/middleware'
+import { Deal, Stage } from '../types'
 
 interface DealStore {
   deals: Deal[]
   stages: Stage[]
   addDeal: (deal: Deal) => void
-  updateDeal: (deal: Deal) => void
-  deleteDeal: (id: string) => void
-  moveDeal: (dealId: string, toStage: string) => void
+  removeDeal: (id: string) => void
+  moveDeal: (id: string, toStage: string) => void
+  addStage: (stage: Stage) => void
+  removeStage: (id: string) => void
+  updateStage: (id: string, stage: Stage) => void
+  reorderStages: (oldIndex: number, newIndex: number) => void
 }
 
-// Sample deals with different data
-const initialDeals: Deal[] = [
-  {
-    id: 'deal1',
-    name: 'Enterprise Software License',
-    value: 50000,
-    stage: 'lead',
-    probability: 0.3,
-    expectedCloseDate: new Date('2024-04-15'),
-    companyId: 'comp1',
-    contactId: 'contact1',
-    description: 'Annual enterprise license for 500 users',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
-  },
-  {
-    id: 'deal2',
-    name: 'Cloud Migration Project',
-    value: 75000,
-    stage: 'contact',
-    probability: 0.5,
-    expectedCloseDate: new Date('2024-05-01'),
-    companyId: 'comp2',
-    contactId: 'contact2',
-    description: 'Full cloud infrastructure migration',
-    createdAt: new Date('2024-01-20'),
-    updatedAt: new Date('2024-01-20')
-  },
-  {
-    id: 'deal3',
-    name: 'Security Audit Package',
-    value: 25000,
-    stage: 'proposal',
-    probability: 0.7,
-    expectedCloseDate: new Date('2024-03-30'),
-    companyId: 'comp3',
-    contactId: 'contact3',
-    description: 'Comprehensive security audit and recommendations',
-    createdAt: new Date('2024-01-25'),
-    updatedAt: new Date('2024-01-25')
-  },
-  {
-    id: 'deal4',
-    name: 'Custom Development',
-    value: 120000,
-    stage: 'negotiation',
-    probability: 0.8,
-    expectedCloseDate: new Date('2024-06-15'),
-    companyId: 'comp4',
-    contactId: 'contact4',
-    description: 'Custom ERP module development',
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-01')
-  },
-  {
-    id: 'deal5',
-    name: 'Training Program',
-    value: 30000,
-    stage: 'lead',
-    probability: 0.4,
-    expectedCloseDate: new Date('2024-04-30'),
-    companyId: 'comp5',
-    contactId: 'contact5',
-    description: 'Technical training program for 100 employees',
-    createdAt: new Date('2024-02-05'),
-    updatedAt: new Date('2024-02-05')
-  }
-]
+const defaultDeal: Deal = {
+  id: '1',
+  name: 'Example Deal',
+  value: 50000,
+  stage: 'lead',
+  probability: 50,
+  expectedCloseDate: new Date(),
+  companyId: '1',
+  contactId: '1',
+  description: 'Example deal for demonstration',
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
 
-const useDealStore = create<DealStore>((set) => ({
-  deals: initialDeals,
-  stages: defaultStages,
-  addDeal: (deal) => set((state) => ({ deals: [...state.deals, deal] })),
-  updateDeal: (deal) =>
-    set((state) => ({
-      deals: state.deals.map((d) => (d.id === deal.id ? deal : d)),
-    })),
-  deleteDeal: (id) =>
-    set((state) => ({
-      deals: state.deals.filter((d) => d.id !== id),
-    })),
-  moveDeal: (dealId, toStage) =>
-    set((state) => ({
-      deals: state.deals.map((deal) =>
-        deal.id === dealId ? { ...deal, stage: toStage } : deal
-      ),
-    })),
-}))
+const useDealStore = create<DealStore>()(
+  persist(
+    (set) => ({
+      deals: [defaultDeal],
+      stages: [
+        { id: 'lead', name: 'Lead', color: '#6B7280' },
+        { id: 'contact', name: 'Contact Made', color: '#3B82F6' },
+        { id: 'proposal', name: 'Proposal', color: '#EAB308' },
+        { id: 'negotiation', name: 'Negotiation', color: '#F97316' },
+        { id: 'closed', name: 'Closed Won', color: '#22C55E' },
+        { id: 'lost', name: 'Closed Lost', color: '#EF4444' }
+      ],
+      addDeal: (deal) => set((state) => ({ deals: [...state.deals, deal] })),
+      removeDeal: (id) => set((state) => ({
+        deals: state.deals.filter((d) => d.id !== id),
+      })),
+      moveDeal: (id, toStage) => set((state) => ({
+        deals: state.deals.map((d) =>
+          d.id === id ? { ...d, stage: toStage } : d
+        ),
+      })),
+      addStage: (stage) => set((state) => ({
+        stages: [...state.stages, stage],
+      })),
+      removeStage: (id) => set((state) => ({
+        stages: state.stages.filter((s) => s.id !== id),
+        deals: state.deals.filter((d) => d.stage !== id),
+      })),
+      updateStage: (id, stage) => set((state) => ({
+        stages: state.stages.map((s) =>
+          s.id === id ? stage : s
+        ),
+      })),
+      reorderStages: (oldIndex, newIndex) => set((state) => {
+        const stages = [...state.stages]
+        const [removed] = stages.splice(oldIndex, 1)
+        stages.splice(newIndex, 0, removed)
+        return { stages }
+      }),
+    }),
+    {
+      name: 'deal-store',
+    }
+  )
+)
 
 export default useDealStore

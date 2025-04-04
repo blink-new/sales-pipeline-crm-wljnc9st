@@ -1,6 +1,8 @@
 
+import { format } from 'date-fns'
 import { Deal } from '../types'
-import { Card } from './ui/card'
+import { Card, CardContent, CardHeader } from './ui/card'
+import { Badge } from './ui/badge'
 import { formatCurrency } from '../lib/utils'
 
 interface DealCardProps {
@@ -9,18 +11,23 @@ interface DealCardProps {
 
 export function DealCard({ deal }: DealCardProps) {
   return (
-    <Card className="p-4 mb-3 cursor-move hover:shadow-md transition-shadow">
-      <div className="space-y-2">
-        <h3 className="font-medium truncate">{deal.name}</h3>
-        <div className="flex justify-between items-center text-sm text-muted-foreground">
-          <span>{formatCurrency(deal.value)}</span>
-          <span>{Math.round(deal.probability * 100)}%</span>
+    <Card className="w-full mb-3 cursor-move hover:shadow-md transition-shadow">
+      <CardHeader className="p-4 pb-2">
+        <div className="flex items-start justify-between">
+          <h3 className="font-semibold text-sm line-clamp-2">{deal.name}</h3>
+          <Badge variant="secondary" className="ml-2">
+            {formatCurrency(deal.value)}
+          </Badge>
         </div>
-        <p className="text-sm text-muted-foreground line-clamp-2">{deal.description}</p>
-        <div className="text-xs text-muted-foreground">
-          Close: {deal.expectedCloseDate.toLocaleDateString()}
+      </CardHeader>
+      <CardContent className="p-4 pt-0">
+        <div className="text-sm text-muted-foreground">
+          <div className="flex items-center justify-between">
+            <span>{deal.probability}% probability</span>
+            <span>{format(deal.expectedCloseDate, 'MMM d')}</span>
+          </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   )
 }

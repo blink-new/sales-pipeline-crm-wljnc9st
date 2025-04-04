@@ -1,43 +1,21 @@
 
-import { PipelineBoard } from './components/PipelineBoard'
-import useDealStore from './store/dealStore'
-import { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { SaasLayout } from './components/SaasLayout'
+import { Pipeline } from './pages/Pipeline'
+import { Settings } from './pages/Settings'
+import { Toaster } from './components/ui/toaster'
 
-// Sample data for testing
-const sampleDeal = {
-  id: '1',
-  name: 'Enterprise Software Deal',
-  value: 50000,
-  stage: 'lead',
-  probability: 20,
-  expectedCloseDate: new Date('2024-03-30'),
-  companyId: '1',
-  contactId: '1',
-  description: 'Large enterprise software license deal',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-}
-
-function App() {
-  const { addDeal } = useDealStore()
-
-  useEffect(() => {
-    // Add sample deal for testing
-    addDeal(sampleDeal)
-  }, [])
-
+export function App() {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container flex items-center h-16 px-4">
-          <h1 className="text-xl font-bold">Sales Pipeline CRM</h1>
-        </div>
-      </header>
-      <main className="container mx-auto">
-        <PipelineBoard />
-      </main>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<SaasLayout />}>
+          <Route index element={<Navigate to="/pipeline" replace />} />
+          <Route path="pipeline" element={<Pipeline />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+      </Routes>
+      <Toaster />
+    </Router>
   )
 }
-
-export default App

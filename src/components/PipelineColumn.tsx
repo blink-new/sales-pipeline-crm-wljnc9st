@@ -1,6 +1,8 @@
 
 import { useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Stage, Deal } from '../types'
+import { DealCard } from './DealCard'
 import { cn } from '../lib/utils'
 import { SortableDealCard } from './SortableDealCard'
 
@@ -16,10 +18,9 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
 
   return (
     <div
-      ref={setNodeRef}
       className={cn(
-        'flex-shrink-0 w-80 bg-muted/30 rounded-lg p-4 transition-colors duration-200',
-        isOver && 'bg-muted/50 ring-2 ring-primary'
+        'flex-shrink-0 w-80 bg-muted/30 rounded-lg p-4',
+        isOver && 'ring-2 ring-primary/20'
       )}
     >
       <div className="flex items-center justify-between mb-4">
@@ -28,13 +29,18 @@ export function PipelineColumn({ stage, deals }: PipelineColumnProps) {
           <h3 className="font-semibold">{stage.name}</h3>
         </div>
         <span className="text-sm text-muted-foreground">
-          {deals.length} {deals.length === 1 ? 'deal' : 'deals'}
+          {deals.length} deals
         </span>
       </div>
-      <div className="space-y-3">
-        {deals.map((deal) => (
-          <SortableDealCard key={deal.id} deal={deal} />
-        ))}
+      <div
+        ref={setNodeRef}
+        className="h-full overflow-y-auto"
+      >
+        <SortableContext items={deals} strategy={verticalListSortingStrategy}>
+          {deals.map((deal) => (
+            <SortableDealCard key={deal.id} deal={deal} />
+          ))}
+        </SortableContext}
       </div>
     </div>
   )

@@ -42,10 +42,10 @@ export type Stage = {
 }
 
 export const defaultStages: Stage[] = [
-  { id: 'lead', name: 'Lead', color: 'bg-gray-500' },
-  { id: 'contact', name: 'Contact Made', color: 'bg-blue-500' },
-  { id: 'proposal', name: 'Proposal', color: 'bg-yellow-500' },
-  { id: 'negotiation', name: 'Negotiation', color: 'bg-orange-500' },
-  { id: 'closed', name: 'Closed Won', color: 'bg-green-500' },
-  { id: 'lost', name: 'Closed Lost', color: 'bg-red-500' },
+  { id: 'lead', name: 'Lead', color: '#6B7280' },
+  { id: 'contact', name: 'Contact Made', color: '#3B82F6' },
+  { id: 'proposal', name: 'Proposal', color: '#EAB308' },
+  { id: 'negotiation', name: 'Negotiation', color: '#F97316' },
+  { id: 'closed', name: 'Closed Won', color: '#22C55E' },
+  { id: 'lost', name: 'Closed Lost', color: '#EF4444' }
 ]
