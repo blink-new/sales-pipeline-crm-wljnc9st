@@ -2,10 +2,10 @@
 import { DealCard } from "./DealCard"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { cn } from "@/lib/utils"
-import useDealStore from "../store/dealStore"
+import { useDeals } from "@/hooks/use-deals"
 
 export function Pipeline() {
-  const { deals, stages, moveDeal } = useDealStore()
+  const { deals, stages, updateDealStage } = useDeals()
 
   const onDragEnd = (result: any) => {
     if (!result.destination) return
@@ -14,7 +14,7 @@ export function Pipeline() {
     const deal = deals.find(d => d.id === draggableId)
     if (!deal) return
 
-    moveDeal(deal.id, destination.droppableId)
+    updateDealStage(deal.id, destination.droppableId)
   }
 
   return (
@@ -57,7 +57,7 @@ export function Pipeline() {
                             <DealCard
                               deal={deal}
                               className={cn(
-                                snapshot.isDragging && "shadow-lg",
+                                snapshot.isDraggingOver && "shadow-lg",
                                 "bg-background"
                               )}
                             />
