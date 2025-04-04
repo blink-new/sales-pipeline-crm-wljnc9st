@@ -4,6 +4,8 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Deal, Stage } from '../types'
 import { SortableDealCard } from './SortableDealCard'
 import { cn } from '../lib/utils'
+import { Badge } from './ui/badge'
+import { Card } from './ui/card'
 
 interface PipelineColumnProps {
   stage: Stage
@@ -16,25 +18,27 @@ export function PipelineColumn({ stage, deals, isDropping }: PipelineColumnProps
     id: stage.id,
   })
 
+  const totalValue = deals.reduce((sum, deal) => sum + (deal.value || 0), 0)
+
   return (
-    <div
+    <Card
       ref={setNodeRef}
       className={cn(
-        "w-80 shrink-0 bg-card rounded-xl border shadow-sm",
+        "w-80 shrink-0",
         isOver && "ring-2 ring-primary/20 bg-muted/50",
         isDropping && "ring-2 ring-primary"
       )}
     >
-      <div className="p-3 border-b bg-card">
+      <div className="p-3 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="font-medium">{stage.name}</h3>
-            <div className="flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full bg-muted">
+            <Badge variant="secondary" className="rounded-full">
               {deals.length}
-            </div>
+            </Badge>
           </div>
           <div className="text-sm text-muted-foreground">
-            ${deals.reduce((sum, deal) => sum + (deal.value || 0), 0).toLocaleString()}
+            ${totalValue.toLocaleString()}
           </div>
         </div>
       </div>
@@ -55,6 +59,6 @@ export function PipelineColumn({ stage, deals, isDropping }: PipelineColumnProps
           )}
         </div>
       </SortableContext>
-    </div>
+    </Card>
   )
 }

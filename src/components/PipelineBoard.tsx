@@ -24,6 +24,7 @@ import { useState } from 'react'
 import { DealCard } from './DealCard'
 import { Plus } from 'lucide-react'
 import { Button } from './ui/button'
+import { NewDealDialog } from './NewDealDialog'
 
 const dropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -39,6 +40,7 @@ export function PipelineBoard() {
   const { deals, stages, moveDeal } = useDealStore()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [currentStage, setCurrentStage] = useState<string | null>(null)
+  const [showNewDeal, setShowNewDeal] = useState(false)
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -118,7 +120,7 @@ export function PipelineBoard() {
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-6 py-4 border-b">
         <h1 className="text-2xl font-semibold tracking-tight">Pipeline</h1>
-        <Button size="sm">
+        <Button size="sm" onClick={() => setShowNewDeal(true)}>
           <Plus className="w-4 h-4 mr-2" />
           New Deal
         </Button>
@@ -151,6 +153,8 @@ export function PipelineBoard() {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      <NewDealDialog open={showNewDeal} onOpenChange={setShowNewDeal} />
     </div>
   )
 }
