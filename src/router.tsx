@@ -1,7 +1,7 @@
 
 import { createBrowserRouter } from 'react-router-dom'
 import SaasLayout from './components/SaasLayout'
-import Pipeline from './pages/Pipeline'
+import { Pipeline } from './pages/Pipeline'
 import Pricing from './pages/Pricing'
 import ProfilePage from './pages/ProfilePage'
 import Settings from './pages/Settings'
