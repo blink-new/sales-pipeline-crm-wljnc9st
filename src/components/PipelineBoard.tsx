@@ -10,7 +10,8 @@ import {
   useSensors,
   closestCorners,
   DragOverlay,
-  defaultDropAnimationSideEffects
+  defaultDropAnimationSideEffects,
+  pointerWithin,
 } from '@dnd-kit/core'
 import { 
   arrayMove,
@@ -36,8 +37,8 @@ const dropAnimation = {
 export function PipelineBoard() {
   const { deals, stages, moveDeal } = useDealStore()
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [currentStage, setCurrentStage] = useState<string | null>(null)
 
-  // Configure sensors for both mouse and touch
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -55,6 +56,10 @@ export function PipelineBoard() {
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
     setActiveId(active.id as string)
+    const deal = deals.find(d => d.id === active.id)
+    if (deal) {
+      setCurrentStage(deal.stage)
+    }
   }
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -68,31 +73,47 @@ export function PipelineBoard() {
     const activeDeal = deals.find(deal => deal.id === activeId)
     if (!activeDeal) return
 
-    // If over a stage
+    // Check if we're over a stage
     const overStage = stages.find(stage => stage.id === overId)
     if (overStage && activeDeal.stage !== overId) {
-      moveDeal(activeId, overId)
+      setCurrentStage(overId)
     }
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-
+    
     if (!over) {
       setActiveId(null)
+      setCurrentStage(null)
       return
     }
 
     const activeId = active.id as string
     const overId = over.id as string
 
-    // Find the stages
+    // Find the active deal
+    const activeDeal = deals.find(deal => deal.id === activeId)
+    if (!activeDeal) return
+
+    // Find if we're over a stage
     const overStage = stages.find(stage => stage.id === overId)
     if (overStage) {
       moveDeal(activeId, overId)
+    } else {
+      // If we're not over a stage, but we have a currentStage, move to that
+      if (currentStage && currentStage !== activeDeal.stage) {
+        moveDeal(activeId, currentStage)
+      }
     }
 
     setActiveId(null)
+    setCurrentStage(null)
+  }
+
+  const handleDragCancel = () => {
+    setActiveId(null)
+    setCurrentStage(null)
   }
 
   const activeDeal = activeId ? deals.find(deal => deal.id === activeId) : null
@@ -100,10 +121,11 @@ export function PipelineBoard() {
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
       <div className="flex gap-4 h-[calc(100vh-12rem)] overflow-x-auto p-4">
         {stages.map((stage: Stage) => (
@@ -111,7 +133,7 @@ export function PipelineBoard() {
             key={stage.id}
             stage={stage}
             deals={deals.filter((deal) => deal.stage === stage.id)}
-            isDropping={activeId ? deals.find(d => d.id === activeId)?.stage === stage.id : false}
+            isDropping={currentStage === stage.id}
           />
         ))}
       </div>
