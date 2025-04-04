@@ -4,8 +4,6 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Deal, Stage } from '../types'
 import { SortableDealCard } from './SortableDealCard'
 import { cn } from '../lib/utils'
-import { Badge } from './ui/badge'
-import { Card } from './ui/card'
 
 interface PipelineColumnProps {
   stage: Stage
@@ -21,21 +19,21 @@ export function PipelineColumn({ stage, deals, isDropping }: PipelineColumnProps
   const totalValue = deals.reduce((sum, deal) => sum + (deal.value || 0), 0)
 
   return (
-    <Card
+    <div
       ref={setNodeRef}
       className={cn(
-        "w-80 shrink-0",
-        isOver && "ring-2 ring-primary/20 bg-muted/50",
+        "w-80 shrink-0 bg-white rounded-lg border shadow-sm",
+        isOver && "ring-2 ring-primary/20",
         isDropping && "ring-2 ring-primary"
       )}
     >
       <div className="p-3 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium">{stage.name}</h3>
-            <Badge variant="secondary" className="rounded-full">
+            <span className="font-medium">{stage.name}</span>
+            <span className="text-sm text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
               {deals.length}
-            </Badge>
+            </span>
           </div>
           <div className="text-sm text-muted-foreground">
             ${totalValue.toLocaleString()}
@@ -48,17 +46,17 @@ export function PipelineColumn({ stage, deals, isDropping }: PipelineColumnProps
         items={deals.map(d => d.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="p-3 space-y-3">
+        <div className="p-3 space-y-3 min-h-[200px]">
           {deals.map((deal) => (
             <SortableDealCard key={deal.id} deal={deal} />
           ))}
           {deals.length === 0 && (
-            <div className="flex items-center justify-center h-24 border-2 border-dashed rounded-lg border-muted">
-              <p className="text-sm text-muted-foreground">Drop deals here</p>
+            <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+              Drop deals here
             </div>
           )}
         </div>
       </SortableContext>
-    </Card>
+    </div>
   )
 }
