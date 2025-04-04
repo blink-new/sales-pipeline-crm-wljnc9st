@@ -47,7 +47,7 @@ export function Navigation() {
       <Link
         to={to}
         className={cn(
-          'group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent',
+          'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent',
           isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-accent-foreground',
           isCollapsed && 'justify-center px-2'
         )}
@@ -76,11 +76,11 @@ export function Navigation() {
   }
   
   const NavContent = () => (
-    <div className="flex h-full flex-col justify-between">
-      <div className="space-y-6">
+    <div className="flex h-full flex-col justify-between pb-4">
+      <div className="space-y-4">
         <div className={cn(
-          "flex h-16 items-center px-6",
-          isCollapsed && "justify-center px-2"
+          "flex h-16 items-center justify-between",
+          isCollapsed ? "px-2" : "px-6"
         )}>
           {!isCollapsed && (
             <Link to="/" className="text-xl font-bold">
@@ -91,10 +91,7 @@ export function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              className={cn(
-                "absolute right-2",
-                isCollapsed && "right-0"
-              )}
+              className="h-8 w-8"
               onClick={toggle}
             >
               {isCollapsed ? (
@@ -107,7 +104,7 @@ export function Navigation() {
         </div>
         
         <nav className={cn(
-          "space-y-2",
+          "space-y-1",
           isCollapsed ? "px-2" : "px-4"
         )}>
           <NavLink
@@ -126,9 +123,9 @@ export function Navigation() {
           "px-4",
           isCollapsed && "px-2"
         )}>
-          <Separator />
+          <Separator className="my-4" />
           {!isCollapsed && (
-            <div className="my-4 px-3">
+            <div className="px-3">
               <Button 
                 className="relative w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white transition-all hover:from-violet-500 hover:to-indigo-500"
                 size="lg"
@@ -140,25 +137,48 @@ export function Navigation() {
               </Button>
             </div>
           )}
+          {isCollapsed && (
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="relative w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white transition-all hover:from-violet-500 hover:to-indigo-500"
+                    size="icon"
+                    onClick={() => navigate('/pricing')}
+                  >
+                    <Sparkles className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Upgrade to Pro</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       </div>
 
-      <div className="sticky bottom-0 border-t bg-background p-4">
+      <div className={cn(
+        "border-t bg-background",
+        isCollapsed ? "px-2" : "px-4",
+        "pt-4"
+      )}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full justify-start">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-                  <AvatarFallback>SC</AvatarFallback>
-                </Avatar>
-                {!isCollapsed && (
-                  <div className="flex flex-col items-start text-sm">
-                    <span className="font-medium">John Doe</span>
-                    <span className="text-xs text-muted-foreground">john@example.com</span>
-                  </div>
-                )}
-              </div>
+            <Button variant="ghost" className={cn(
+              "w-full",
+              isCollapsed ? "justify-center px-0" : "justify-start"
+            )}>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                <AvatarFallback>SC</AvatarFallback>
+              </Avatar>
+              {!isCollapsed && (
+                <div className="ml-3 flex flex-col items-start text-sm">
+                  <span className="font-medium">John Doe</span>
+                  <span className="text-xs text-muted-foreground">john@example.com</span>
+                </div>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
