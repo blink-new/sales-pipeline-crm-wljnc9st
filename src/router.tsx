@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import SaasLayout from './components/SaasLayout'
 import { Pipeline } from './pages/Pipeline'
 import { PricingPage } from './pages/Pricing'
-import ProfilePage from './pages/ProfilePage'
+import { ProfilePage } from './pages/ProfilePage'
 import Settings from './pages/Settings'
 
 export const router = createBrowserRouter([
